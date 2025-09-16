@@ -83,13 +83,3 @@ Simply open the `index.html` file in your browser.
 This project is open-source and available under the **MIT License**.
 
 ```
-
----
-
-👉 You just need to:  
-1. Create a folder named `screenshots/` inside your project.  
-2. Add your screenshots (e.g., `about.png`, `resume.png`, etc.).  
-3. Update the image links in the **Screenshots** section.  
-
-Do you want me to also create **sample screenshots automatically** from your `index.html` so you don’t have to capture them manually?
-```
