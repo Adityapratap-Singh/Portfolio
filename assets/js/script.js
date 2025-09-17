@@ -1,87 +1,181 @@
 'use strict';
 
+/* -------------------------
+   Utilities
+-------------------------*/
+const elementToggleFunc = function (elem) { elem.classList.toggle("active"); };
 
-
-// element toggle function
-const elementToggleFunc = function (elem) { elem.classList.toggle("active"); }
-
-
-
-// sidebar variables
+/* -------------------------
+   Sidebar
+-------------------------*/
 const sidebar = document.querySelector("[data-sidebar]");
 const sidebarBtn = document.querySelector("[data-sidebar-btn]");
-
-// sidebar toggle functionality for mobile
-sidebarBtn.addEventListener("click", function () { elementToggleFunc(sidebar); });
-
-
-
-// testimonials variables
-const testimonialsItem = document.querySelectorAll("[data-testimonials-item]");
-const modalContainer = document.querySelector("[data-modal-container]");
-const modalCloseBtn = document.querySelector("[data-modal-close-btn]");
-const overlay = document.querySelector("[data-overlay]");
-
-// modal variable
-const modalImg = document.querySelector("[data-modal-img]");
-const modalTitle = document.querySelector("[data-modal-title]");
-const modalText = document.querySelector("[data-modal-text]");
-
-// modal toggle function
-const testimonialsModalFunc = function () {
-  modalContainer.classList.toggle("active");
-  overlay.classList.toggle("active");
+if (sidebarBtn && sidebar) {
+  sidebarBtn.addEventListener("click", function () { elementToggleFunc(sidebar); });
 }
 
-// add click event to all modal items
-for (let i = 0; i < testimonialsItem.length; i++) {
+/* -------------------------
+   Testimonials - inline "centered" expand (works on touch + mouse)
+-------------------------*/
+const testimonialsItem = document.querySelectorAll("[data-testimonials-item]");
 
-  testimonialsItem[i].addEventListener("click", function () {
+// keep reference to current expanded elements
+let expandedOverlay = null;
+let expandedModal = null;
+let currentSourceItem = null;
+let escHandler = null;
 
-    modalImg.src = this.querySelector("[data-testimonials-avatar]").src;
-    modalImg.alt = this.querySelector("[data-testimonials-avatar]").alt;
-    modalTitle.innerHTML = this.querySelector("[data-testimonials-title]").innerHTML;
-    modalText.innerHTML = this.querySelector("[data-testimonials-text]").innerHTML;
+function closeExpanded() {
+  if (expandedModal) {
+    expandedModal.classList.remove('visible');
+    // allow transition to finish then remove
+    setTimeout(() => {
+      if (expandedModal && expandedModal.parentNode) expandedModal.parentNode.removeChild(expandedModal);
+      expandedModal = null;
+    }, 200);
+  }
+  if (expandedOverlay) {
+    expandedOverlay.classList.remove('visible');
+    setTimeout(() => {
+      if (expandedOverlay && expandedOverlay.parentNode) expandedOverlay.parentNode.removeChild(expandedOverlay);
+      expandedOverlay = null;
+    }, 200);
+  }
+  currentSourceItem = null;
+  if (escHandler) {
+    document.removeEventListener('keydown', escHandler);
+    escHandler = null;
+  }
+}
 
-    testimonialsModalFunc();
+function buildExpandedModalFrom(item) {
+  // read data from the clicked item
+  const avatar = item.querySelector('[data-testimonials-avatar]');
+  const title = item.querySelector('[data-testimonials-title]');
+  const text = item.querySelector('[data-testimonials-text]');
 
+  // create overlay
+  expandedOverlay = document.createElement('div');
+  expandedOverlay.className = 'expanded-overlay';
+  document.body.appendChild(expandedOverlay);
+  // allow animation
+  requestAnimationFrame(() => expandedOverlay.classList.add('visible'));
+  expandedOverlay.addEventListener('click', () => closeExpanded());
+
+  // create modal container
+  expandedModal = document.createElement('div');
+  expandedModal.className = 'expanded-testimonial';
+  expandedModal.innerHTML = `
+    <button class="expanded-close" aria-label="Close testimonial">&times;</button>
+    <div class="expanded-inner">
+      <div class="expanded-header">
+        <div class="modal-avatar-box expanded-avatar-box">
+          ${avatar ? `<img src="${avatar.src}" alt="${avatar.alt || ''}" loading="lazy">` : ''}
+        </div>
+        <div class="expanded-title-wrap">
+          <h4 class="h3 modal-title expanded-title">${title ? title.innerHTML : ''}</h4>
+        </div>
+      </div>
+      <div class="expanded-body">
+        ${text ? text.innerHTML : ''}
+      </div>
+    </div>
+  `;
+  document.body.appendChild(expandedModal);
+
+  // small delay to trigger CSS transition
+  requestAnimationFrame(() => expandedModal.classList.add('visible'));
+
+  // close button
+  const closeBtn = expandedModal.querySelector('.expanded-close');
+  closeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeExpanded();
   });
 
+  // stop clicks inside modal from closing via overlay
+  expandedModal.addEventListener('click', (e) => e.stopPropagation());
+
+  // ESC key to close
+  escHandler = function (e) {
+    if (e.key === 'Escape') closeExpanded();
+  };
+  document.addEventListener('keydown', escHandler);
 }
 
-// add click event to modal close button
-modalCloseBtn.addEventListener("click", testimonialsModalFunc);
-overlay.addEventListener("click", testimonialsModalFunc);
+function toggleExpand(item) {
+  // if already expanded from this item -> close
+  if (currentSourceItem === item) {
+    closeExpanded();
+    return;
+  }
+  // else close existing and open new
+  closeExpanded();
+  currentSourceItem = item;
+  buildExpandedModalFrom(item);
+}
 
+// tap detection to avoid opening while swiping
+testimonialsItem.forEach(function (item) {
+  let pointerDown = false;
+  let startX = 0;
+  let startY = 0;
+  let pointerId = null;
 
+  item.addEventListener('pointerdown', function (e) {
+    pointerDown = true;
+    startX = e.clientX;
+    startY = e.clientY;
+    pointerId = e.pointerId;
+    try { item.setPointerCapture(pointerId); } catch (err) { /* ignore */ }
+  });
 
-// custom select variables
+  item.addEventListener('pointerup', function (e) {
+    if (!pointerDown) return;
+    pointerDown = false;
+    try { item.releasePointerCapture(pointerId); } catch (err) { /* ignore */ }
+
+    const dx = Math.abs(e.clientX - startX);
+    const dy = Math.abs(e.clientY - startY);
+
+    // threshold: treat as a tap if finger/mouse moved < 10px
+    if (dx < 10 && dy < 10) {
+      toggleExpand(item);
+    }
+  });
+
+  item.addEventListener('pointercancel', function () {
+    pointerDown = false;
+    try { item.releasePointerCapture(pointerId); } catch (err) { /* ignore */ }
+  });
+});
+
+/* -------------------------
+   (Other page features kept from original)
+-------------------------*/
+
+/* custom select variables */
 const select = document.querySelector("[data-select]");
 const selectItems = document.querySelectorAll("[data-select-item]");
 const selectValue = document.querySelector("[data-selecct-value]");
 const filterBtn = document.querySelectorAll("[data-filter-btn]");
 
-select.addEventListener("click", function () { elementToggleFunc(this); });
+if (select) select.addEventListener("click", function () { elementToggleFunc(this); });
 
-// add event in all select items
 for (let i = 0; i < selectItems.length; i++) {
   selectItems[i].addEventListener("click", function () {
-
     let selectedValue = this.innerText.toLowerCase();
-    selectValue.innerText = this.innerText;
-    elementToggleFunc(select);
+    if (selectValue) selectValue.innerText = this.innerText;
+    if (select) elementToggleFunc(select);
     filterFunc(selectedValue);
-
   });
 }
 
-// filter variables
+/* filter */
 const filterItems = document.querySelectorAll("[data-filter-item]");
 
 const filterFunc = function (selectedValue) {
-
   for (let i = 0; i < filterItems.length; i++) {
-
     if (selectedValue === "all") {
       filterItems[i].classList.add("active");
     } else if (selectedValue === filterItems[i].dataset.category) {
@@ -89,86 +183,67 @@ const filterFunc = function (selectedValue) {
     } else {
       filterItems[i].classList.remove("active");
     }
-
   }
+};
 
+if (filterBtn && filterBtn.length > 0) {
+  let lastClickedBtn = filterBtn[0];
+  for (let i = 0; i < filterBtn.length; i++) {
+    filterBtn[i].addEventListener("click", function () {
+      let selectedValue = this.innerText.toLowerCase();
+      if (selectValue) selectValue.innerText = this.innerText;
+      filterFunc(selectedValue);
+
+      if (lastClickedBtn) lastClickedBtn.classList.remove("active");
+      this.classList.add("active");
+      lastClickedBtn = this;
+    });
+  }
 }
 
-// add event in all filter button items for large screen
-let lastClickedBtn = filterBtn[0];
-
-for (let i = 0; i < filterBtn.length; i++) {
-
-  filterBtn[i].addEventListener("click", function () {
-
-    let selectedValue = this.innerText.toLowerCase();
-    selectValue.innerText = this.innerText;
-    filterFunc(selectedValue);
-
-    lastClickedBtn.classList.remove("active");
-    this.classList.add("active");
-    lastClickedBtn = this;
-
-  });
-
-}
-
-
-
-// contact form variables
+/* contact form validation */
 const form = document.querySelector("[data-form]");
 const formInputs = document.querySelectorAll("[data-form-input]");
 const formBtn = document.querySelector("[data-form-btn]");
 
-// add event to all form input field
 for (let i = 0; i < formInputs.length; i++) {
   formInputs[i].addEventListener("input", function () {
-
-    // check form validation
+    if (!form || !formBtn) return;
     if (form.checkValidity()) {
       formBtn.removeAttribute("disabled");
     } else {
       formBtn.setAttribute("disabled", "");
     }
-
   });
 }
 
-
-
-// page navigation variables
+/* page navigation */
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
-// add event to all nav link
 for (let i = 0; i < navigationLinks.length; i++) {
   navigationLinks[i].addEventListener("click", function () {
-
-    for (let i = 0; i < pages.length; i++) {
-      if (this.innerHTML.toLowerCase() === pages[i].dataset.page) {
-        pages[i].classList.add("active");
-        navigationLinks[i].classList.add("active");
+    for (let j = 0; j < pages.length; j++) {
+      if (this.innerHTML.toLowerCase() === pages[j].dataset.page) {
+        pages[j].classList.add("active");
+        navigationLinks[j].classList.add("active");
         window.scrollTo(0, 0);
       } else {
-        pages[i].classList.remove("active");
-        navigationLinks[i].classList.remove("active");
+        pages[j].classList.remove("active");
+        navigationLinks[j].classList.remove("active");
       }
     }
-
   });
 }
 
-// WhatsApp form submission
+/* WhatsApp form submission */
 function sendWhatsApp(e) {
-  e.preventDefault(); // Prevent default form submission
+  e.preventDefault();
+  const name = document.getElementById('fullname')?.value || '';
+  const email = document.getElementById('email')?.value || '';
+  const phone = document.getElementById('phone')?.value || '';
+  const message = document.getElementById('message')?.value || '';
 
-  // Get values
-  const name = document.getElementById('fullname').value;
-  const email = document.getElementById('email').value;
-  const phone = document.getElementById('phone').value;
-  const message = document.getElementById('message').value;
-
-  // Construct message
   const text = `Hello Adityapratap, 👋
 
 My name is ${name}.  
@@ -179,11 +254,7 @@ Here’s my message for you:
 
 Looking forward to your reply! 😊`;
 
-
-  // WhatsApp number (with country code, e.g., 91 for India)
-  const whatsappNumber = "+917355259901"; // replace with your number
-
-  // Open WhatsApp chat with pre-filled message
-  const url = `https://wa.me/${whatsappNumber}?text=${text}`;
+  const whatsappNumber = "+917355259901";
+  const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
   window.open(url, "_blank");
 }
