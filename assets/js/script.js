@@ -15,11 +15,10 @@ if (sidebarBtn && sidebar) {
 }
 
 /* -------------------------
-   Testimonials - inline "centered" expand (works on touch + mouse)
+   Testimonials - Expand on click/tap (works on mobile & desktop)
 -------------------------*/
 const testimonialsItem = document.querySelectorAll("[data-testimonials-item]");
 
-// keep reference to current expanded elements
 let expandedOverlay = null;
 let expandedModal = null;
 let currentSourceItem = null;
@@ -28,7 +27,6 @@ let escHandler = null;
 function closeExpanded() {
   if (expandedModal) {
     expandedModal.classList.remove('visible');
-    // allow transition to finish then remove
     setTimeout(() => {
       if (expandedModal && expandedModal.parentNode) expandedModal.parentNode.removeChild(expandedModal);
       expandedModal = null;
@@ -49,20 +47,18 @@ function closeExpanded() {
 }
 
 function buildExpandedModalFrom(item) {
-  // read data from the clicked item
   const avatar = item.querySelector('[data-testimonials-avatar]');
   const title = item.querySelector('[data-testimonials-title]');
   const text = item.querySelector('[data-testimonials-text]');
 
-  // create overlay
+  // overlay
   expandedOverlay = document.createElement('div');
   expandedOverlay.className = 'expanded-overlay';
   document.body.appendChild(expandedOverlay);
-  // allow animation
   requestAnimationFrame(() => expandedOverlay.classList.add('visible'));
   expandedOverlay.addEventListener('click', () => closeExpanded());
 
-  // create modal container
+  // modal
   expandedModal = document.createElement('div');
   expandedModal.className = 'expanded-testimonial';
   expandedModal.innerHTML = `
@@ -82,21 +78,11 @@ function buildExpandedModalFrom(item) {
     </div>
   `;
   document.body.appendChild(expandedModal);
-
-  // small delay to trigger CSS transition
   requestAnimationFrame(() => expandedModal.classList.add('visible'));
 
-  // close button
-  const closeBtn = expandedModal.querySelector('.expanded-close');
-  closeBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    closeExpanded();
-  });
+  expandedModal.querySelector('.expanded-close').addEventListener('click', closeExpanded);
+  expandedModal.addEventListener('click', e => e.stopPropagation());
 
-  // stop clicks inside modal from closing via overlay
-  expandedModal.addEventListener('click', (e) => e.stopPropagation());
-
-  // ESC key to close
   escHandler = function (e) {
     if (e.key === 'Escape') closeExpanded();
   };
@@ -104,18 +90,16 @@ function buildExpandedModalFrom(item) {
 }
 
 function toggleExpand(item) {
-  // if already expanded from this item -> close
   if (currentSourceItem === item) {
     closeExpanded();
     return;
   }
-  // else close existing and open new
   closeExpanded();
   currentSourceItem = item;
   buildExpandedModalFrom(item);
 }
 
-// tap detection to avoid opening while swiping
+// tap detection to avoid swipe misfires
 testimonialsItem.forEach(function (item) {
   let pointerDown = false;
   let startX = 0;
@@ -127,18 +111,15 @@ testimonialsItem.forEach(function (item) {
     startX = e.clientX;
     startY = e.clientY;
     pointerId = e.pointerId;
-    try { item.setPointerCapture(pointerId); } catch (err) { /* ignore */ }
+    try { item.setPointerCapture(pointerId); } catch {}
   });
 
   item.addEventListener('pointerup', function (e) {
     if (!pointerDown) return;
     pointerDown = false;
-    try { item.releasePointerCapture(pointerId); } catch (err) { /* ignore */ }
-
+    try { item.releasePointerCapture(pointerId); } catch {}
     const dx = Math.abs(e.clientX - startX);
     const dy = Math.abs(e.clientY - startY);
-
-    // threshold: treat as a tap if finger/mouse moved < 10px
     if (dx < 10 && dy < 10) {
       toggleExpand(item);
     }
@@ -146,15 +127,13 @@ testimonialsItem.forEach(function (item) {
 
   item.addEventListener('pointercancel', function () {
     pointerDown = false;
-    try { item.releasePointerCapture(pointerId); } catch (err) { /* ignore */ }
+    try { item.releasePointerCapture(pointerId); } catch {}
   });
 });
 
 /* -------------------------
-   (Other page features kept from original)
+   Custom select
 -------------------------*/
-
-/* custom select variables */
 const select = document.querySelector("[data-select]");
 const selectItems = document.querySelectorAll("[data-select-item]");
 const selectValue = document.querySelector("[data-selecct-value]");
@@ -171,9 +150,7 @@ for (let i = 0; i < selectItems.length; i++) {
   });
 }
 
-/* filter */
 const filterItems = document.querySelectorAll("[data-filter-item]");
-
 const filterFunc = function (selectedValue) {
   for (let i = 0; i < filterItems.length; i++) {
     if (selectedValue === "all") {
@@ -201,7 +178,9 @@ if (filterBtn && filterBtn.length > 0) {
   }
 }
 
-/* contact form validation */
+/* -------------------------
+   Contact form
+-------------------------*/
 const form = document.querySelector("[data-form]");
 const formInputs = document.querySelectorAll("[data-form-input]");
 const formBtn = document.querySelector("[data-form-btn]");
@@ -217,7 +196,9 @@ for (let i = 0; i < formInputs.length; i++) {
   });
 }
 
-/* page navigation */
+/* -------------------------
+   Page navigation
+-------------------------*/
 const navigationLinks = document.querySelectorAll("[data-nav-link]");
 const pages = document.querySelectorAll("[data-page]");
 
@@ -236,7 +217,9 @@ for (let i = 0; i < navigationLinks.length; i++) {
   });
 }
 
-/* WhatsApp form submission */
+/* -------------------------
+   WhatsApp form submission
+-------------------------*/
 function sendWhatsApp(e) {
   e.preventDefault();
   const name = document.getElementById('fullname')?.value || '';
