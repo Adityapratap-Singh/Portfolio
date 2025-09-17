@@ -1,75 +1,82 @@
+Thank you for sharing the link to your portfolio: [https://portfolio-delta-five-e3a9qmwits.vercel.app/](https://portfolio-delta-five-e3a9qmwits.vercel.app/). I've reviewed it, and here's an updated **`README.md`** tailored to your project:
+
+---
+
 # 🌐 Personal Portfolio Website
 
-A modern and responsive **portfolio website** built using **HTML, CSS, and JavaScript**.  
-This site highlights my **skills, education, projects, blog, and contact details** in a clean and interactive design.
+Welcome to my personal portfolio! This is a modern, responsive, and interactive website designed to showcase my skills, education, projects, and contact details. Built with **HTML, CSS, and JavaScript**, the site follows a clean UI/UX approach with smooth navigation and optimized responsiveness.
 
 ---
 
 ## 📌 Features
 
-- **Responsive Design** – Optimized for desktop, tablet, and mobile.
-- **About Section** – Overview of my profile, services, and testimonials.
-- **Resume Section** – Timeline of education, experience, and skills.
-- **Portfolio Section** – Showcase of projects with category filters.
-- **Blog Section** – Placeholder for future blogs.
-- **Contact Section** – Contact form with WhatsApp integration and Google Maps.
-- **Interactive Sidebar & Navigation** – Easy switching between sections.
-- **Modern UI/UX** – Clean, minimal, and visually engaging.
+* **Responsive Design** – Works seamlessly across desktop, tablet, and mobile devices.
+* **About Section** – Highlights my profile, services, and testimonials.
+* **Resume Section** – Timeline of education, experience, and skills with a structured layout.
+* **Portfolio Section** – Project showcase with category-based filtering.
+* **Blog Section** – Placeholder for upcoming blogs.
+* **Contact Section** – Includes a contact form with **WhatsApp integration** and **Google Maps embed**.
+* **Interactive Sidebar & Navigation** – Quick switching between sections for better UX.
+* **Modern UI/UX** – Minimal, elegant, and user-friendly interface.
 
 ---
 
-## 🛠️ Technologies Used
+## 🛠️ Tech Stack
 
-- **Frontend:** HTML5, CSS3, JavaScript  
-- **Icons:** Ionicons  
-- **Fonts:** Google Fonts (Poppins)  
+* **Frontend:** HTML5, CSS3, JavaScript
+* **Icons:** Ionicons
+* **Fonts:** Google Fonts (Poppins)
 
 ---
 
 ## 🚀 Getting Started
 
-### Clone the Repository
+### 1️⃣ Clone the Repository
+
 ```bash
 git clone https://github.com/your-username/portfolio.git
-````
+```
 
-### Navigate into the Project
+### 2️⃣ Navigate into the Project
 
 ```bash
 cd portfolio
 ```
 
-### Open in Browser
+### 3️⃣ Run the Project
 
 Simply open the `index.html` file in your browser.
+*(No server setup required)*
+
+---
+
+## 🌍 Live Demo
+
+🔗 [View Portfolio on Vercel](https://portfolio-delta-five-e3a9qmwits.vercel.app/)
 
 ---
 
 ## 📸 Screenshots
 
-### Home / About Section
+### 🏠 Home / About Section
 
-<img width="1912" height="968" alt="image" src="https://github.com/user-attachments/assets/d4e9620e-af95-4efa-91af-e0e14284cfaf" />
+![Home / About Section](https://github.com/user-attachments/assets/d4e9620e-af95-4efa-91af-e0e14284cfaf)
 
+### 🎓 Resume Section
 
-### Resume Section
+![Resume Section](https://github.com/user-attachments/assets/267287ab-2ff6-4390-ba84-99b0d0fa9c89)
 
-<img width="1916" height="979" alt="image" src="https://github.com/user-attachments/assets/267287ab-2ff6-4390-ba84-99b0d0fa9c89" />
+### 💼 Portfolio Section
 
+![Portfolio Section](https://github.com/user-attachments/assets/bfc31a03-a837-449e-a8b2-3f5dce771fc8)
 
-### Portfolio Section
+### 📞 Contact Section
 
-<img width="1919" height="975" alt="image" src="https://github.com/user-attachments/assets/bfc31a03-a837-449e-a8b2-3f5dce771fc8" />
-
-
-### Contact Section
-
-<img width="1919" height="973" alt="image" src="https://github.com/user-attachments/assets/dae49ec6-b8f2-4456-9357-c88a68c62563" />
-
+![Contact Section](https://github.com/user-attachments/assets/dae49ec6-b8f2-4456-9357-c88a68c62563)
 
 ---
 
-## 📬 Contact
+## 📬 Contact Me
 
 **Adityapratap Singh**
 📧 [adityaprataps406@gmail.com](mailto:adityaprataps406@gmail.com)
@@ -80,6 +87,8 @@ Simply open the `index.html` file in your browser.
 
 ## 📝 License
 
-This project is open-source and available under the **MIT License**.
+This project is **open-source** and available under the [MIT License](LICENSE).
 
-```
+---
+
+Feel free to customize the repository URL and add any additional sections or information as needed. Let me know if you need further assistance!
