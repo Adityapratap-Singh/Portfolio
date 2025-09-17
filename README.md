@@ -1,7 +1,3 @@
-Thank you for sharing the link to your portfolio: [https://portfolio-delta-five-e3a9qmwits.vercel.app/](https://portfolio-delta-five-e3a9qmwits.vercel.app/). I've reviewed it, and here's an updated **`README.md`** tailored to your project:
-
----
-
 # 🌐 Personal Portfolio Website
 
 Welcome to my personal portfolio! This is a modern, responsive, and interactive website designed to showcase my skills, education, projects, and contact details. Built with **HTML, CSS, and JavaScript**, the site follows a clean UI/UX approach with smooth navigation and optimized responsiveness.
